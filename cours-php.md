@@ -39,6 +39,45 @@ php -v
 
 Tu dois voir une version `8.x`.
 
+#### Option B : utiliser XAMPP ou WAMP (tout-en-un)
+
+**XAMPP** (Windows, macOS, Linux) et **WAMP** (Windows uniquement) installent en un clic PHP, le serveur Apache, MySQL/MariaDB et phpMyAdmin. C'est l'option la plus simple si tu veux tout avoir d'un coup pour les chapitres 7 à 10. Choisis une version avec **PHP 8.x**.
+
+| | XAMPP | WAMP |
+|---|---|---|
+| Téléchargement | apachefriends.org | wampserver.com |
+| Dossier d'installation (Windows) | `C:\xampp` | `C:\wamp64` |
+| **Dossier de tes sites** | `C:\xampp\htdocs` | `C:\wamp64\www` |
+| Démarrage | *XAMPP Control Panel* → **Start** sur Apache et MySQL | Lancer *WampServer* : l'icône dans la barre des tâches doit devenir **verte** |
+| phpMyAdmin | `http://localhost/phpmyadmin` | `http://localhost/phpmyadmin` |
+| PHP en terminal | `C:\xampp\php\php.exe` | `C:\wamp64\bin\php\php8.x.x\php.exe` |
+
+*(Sur macOS, XAMPP utilise `/Applications/XAMPP/htdocs` ; sur Linux, `/opt/lampp/htdocs`.)*
+
+**Mise en route :**
+
+1. Installe XAMPP ou WAMP, puis démarre **Apache** et **MySQL** (voyants verts).
+2. Crée ton dossier de travail **dans le dossier des sites** : `C:\xampp\htdocs\cours` (XAMPP) ou `C:\wamp64\www\cours` (WAMP).
+3. Mets-y ton fichier `index.php` (voir l'exemple ci-dessous).
+4. Ouvre `http://localhost/cours/index.php` dans ton navigateur.
+
+Avec XAMPP/WAMP, **tu n'as pas besoin de `php -S`** : Apache sert déjà tes fichiers. Modifie ton fichier, enregistre, puis actualise la page (`F5`).
+
+> **Pour tout le cours :** quand tu vois `http://localhost:8000/fichier.php`, remplace par `http://localhost/cours/fichier.php` si tu utilises XAMPP/WAMP.
+
+**Utiliser la commande `php` dans le terminal (facultatif) :** si `php -v` répond « commande introuvable », appelle PHP avec son chemin complet (`C:\xampp\php\php.exe -v`) ou ajoute son dossier à la variable d'environnement `Path` de Windows (*Paramètres → Variables d'environnement → Path → Nouveau*), puis rouvre le terminal.
+
+**Problèmes fréquents :**
+
+| Problème | Solution |
+|---|---|
+| Apache ne démarre pas | Le port 80 est probablement occupé (Skype, IIS, autre serveur). Change le port dans `httpd.conf` (`Listen 8080`), puis utilise `http://localhost:8080/cours/`. |
+| Le navigateur affiche le code PHP ou télécharge le fichier | Tu as ouvert le fichier directement (`file:///...`). Passe toujours par `http://localhost/...`. |
+| Erreur 404 | Ton dossier n'est pas dans `htdocs` (XAMPP) ou `www` (WAMP), ou le nom dans l'URL est faux. |
+| MySQL ne démarre pas | Un autre MySQL tourne déjà (port 3306). Arrête-le ou change le port. |
+
+Tu peux aussi **mixer** : utiliser `php -S` pour servir tes pages et n'utiliser XAMPP/WAMP que pour MySQL (démarre seulement MySQL dans ce cas).
+
 ### 2. Exemple
 
 Crée un dossier `cours` et, dedans, un fichier `index.php` :
@@ -68,6 +107,8 @@ php -S localhost:8000
 ```
 
 Ouvre `http://localhost:8000` dans ton navigateur. Tu vois ton message. Pour arrêter le serveur : `Ctrl + C`.
+
+> **Avec XAMPP/WAMP :** place `index.php` dans `htdocs/cours` (XAMPP) ou `www/cours` (WAMP) et ouvre `http://localhost/cours/` (Apache doit être démarré). Pas besoin de `php -S`.
 
 Mélange HTML et PHP :
 
@@ -106,7 +147,7 @@ echo "Je m'appelle Sarah.<br>";
 echo "Nous sommes en " . date("Y");
 ```
 
-Ouvre `http://localhost:8000/exercice1.php`. Le `<br>` fait un retour à la ligne en HTML, et le point `.` colle deux textes ensemble.
+Ouvre `http://localhost:8000/exercice1.php` (ou `http://localhost/cours/exercice1.php` avec XAMPP/WAMP). Le `<br>` fait un retour à la ligne en HTML, et le point `.` colle deux textes ensemble.
 
 ### À retenir
 
@@ -114,6 +155,7 @@ Ouvre `http://localhost:8000/exercice1.php`. Le `<br>` fait un retour à la lign
 * `php fichier.php` exécute un script dans le terminal.
 * `php -S localhost:8000` lance un serveur local.
 * `echo` affiche du texte, et chaque instruction finit par `;`.
+* Avec XAMPP/WAMP, tes fichiers vont dans `htdocs` / `www` et s'ouvrent via `http://localhost/...`.
 
 ---
 
@@ -713,13 +755,44 @@ Tu vas te connecter à une base MySQL avec PDO et réaliser les quatre opératio
 
 **PDO** est l'outil standard de PHP pour parler à une base de données. Les **requêtes préparées** (`prepare` + `execute`) envoient les valeurs séparément du SQL : c'est indispensable pour éviter les injections SQL.
 
-**Préparation :** il faut un serveur MySQL (ou MariaDB) en marche (XAMPP, MAMP, Docker ou installation directe). Crée une base :
+**Préparation :** il faut un serveur MySQL (ou MariaDB) en marche.
+
+* **XAMPP** : dans le *Control Panel*, clique sur **Start** pour MySQL (et pour Apache si tu veux utiliser phpMyAdmin).
+* **WAMP** : lance *WampServer* et attends l'icône **verte**.
+* **Autre** (MAMP, Docker, installation directe) : démarre ton serveur MySQL/MariaDB.
+
+**Identifiants par défaut de XAMPP et WAMP :** utilisateur `root`, mot de passe **vide** (c'est ce que nous utilisons dans les exemples). Avec MAMP, le mot de passe est souvent `root`.
+
+> Cette configuration convient pour apprendre en local, **jamais** pour un site en ligne.
+
+**Créer la base avec phpMyAdmin (XAMPP/WAMP) :**
+
+1. Ouvre `http://localhost/phpmyadmin`.
+2. Clique sur **Nouvelle base de données**.
+3. Nom : `cours_php`, interclassement : `utf8mb4_unicode_ci`, puis **Créer**.
+
+Pour exécuter du SQL dans phpMyAdmin (créer une table, par exemple) : sélectionne ta base dans la colonne de gauche, ouvre l'onglet **SQL**, colle ta requête et clique sur **Exécuter**.
+
+**Ou créer la base en SQL** (terminal MySQL ou onglet SQL de phpMyAdmin) :
 
 ```sql
 CREATE DATABASE cours_php CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-Vérifie que l'extension est active : `php -m | grep pdo_mysql`.
+Vérifie que l'extension est active : `php -m | grep pdo_mysql` (sur Windows : `php -m | findstr pdo_mysql`). Avec XAMPP et WAMP, elle est **activée par défaut**.
+
+**Erreurs courantes :**
+
+| Message | Cause probable |
+|---|---|
+| `could not find driver` | L'extension `pdo_mysql` n'est pas activée. Dans `php.ini`, enlève le `;` devant `extension=pdo_mysql` (XAMPP : `C:\xampp\php\php.ini` ; WAMP : menu *PHP → Extensions PHP*), puis redémarre Apache. |
+| `Access denied for user 'root'` | Mauvais mot de passe : essaie `""` (XAMPP/WAMP) ou `"root"` (MAMP). |
+| `Connection refused` / `No such file` | MySQL n'est pas démarré, ou il utilise un autre port (ajoute `;port=3307` dans le DSN). |
+| `Unknown database 'cours_php'` | La base n'a pas été créée : fais-le dans phpMyAdmin. |
+
+> **Attention avec WAMP :** la commande `php` du terminal peut utiliser un `php.ini` différent de celui d'Apache. Si un script marche dans le navigateur mais pas en terminal (ou l'inverse), c'est souvent la cause.
+>
+> **Astuce :** avec XAMPP/WAMP, tu peux lancer les exemples du chapitre 7 dans le navigateur (`http://localhost/cours/pdo.php`) au lieu du terminal. Pense alors à remplacer les `\n` par `<br>` ou à entourer l'affichage de `<pre>...</pre>`.
 
 ### 2. Exemple
 
@@ -1340,6 +1413,21 @@ require __DIR__ . "/views/ajouter.php";
 
 Tu vas construire une application complète, étape par étape, en réutilisant tout ce que tu as appris : formulaires, validation, PDO, organisation en fichiers. À la fin, tu pourras ajouter, afficher, modifier, terminer et supprimer des tâches.
 
+### Où placer le projet ?
+
+Choisis **une** des deux méthodes :
+
+| | Méthode 1 : serveur intégré | Méthode 2 : XAMPP / WAMP |
+|---|---|---|
+| Dossier du projet | n'importe où, par exemple `~/todo` | `htdocs/todo` (XAMPP) ou `www/todo` (WAMP) |
+| Démarrage | `php -S localhost:8000` depuis `todo/` | Démarrer **Apache** et **MySQL** |
+| Adresse de l'application | `http://localhost:8000/` | `http://localhost/todo/` |
+| Base de données | MySQL lancé (XAMPP, WAMP…) | MySQL de XAMPP/WAMP |
+
+Dans les tests ci-dessous, je donne l'adresse de la méthode 1 ; avec XAMPP/WAMP, remplace simplement `http://localhost:8000/` par `http://localhost/todo/`.
+
+Le projet n'utilise que des liens **relatifs** (`index.php`, `style.css`) : il fonctionne donc dans les deux cas sans rien modifier.
+
 ### Structure finale
 
 ```
@@ -1364,7 +1452,7 @@ todo/
 
 **On va :** créer la base `todo` et la table `taches`.
 
-Dans MySQL (terminal `mysql -u root -p`, phpMyAdmin ou autre) :
+Avec **XAMPP/WAMP**, ouvre `http://localhost/phpmyadmin`, va dans l'onglet **SQL** (sans sélectionner de base), colle le code ci-dessous et clique sur **Exécuter**. Sinon, utilise le terminal (`mysql -u root -p`) :
 
 ```sql
 CREATE DATABASE todo CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -1380,7 +1468,7 @@ CREATE TABLE taches (
 
 **Explication :** `terminee` vaut `0` (à faire) ou `1` (faite).
 
-**Test :** `SHOW TABLES;` doit afficher `taches`.
+**Test :** `SHOW TABLES;` doit afficher `taches`. Dans phpMyAdmin, la base `todo` et sa table `taches` apparaissent dans la colonne de gauche.
 
 ---
 
@@ -1425,7 +1513,7 @@ try {
 
 **Explication :** `try / catch` attrape l'erreur de connexion et affiche un message simple.
 
-**Test :** crée temporairement `test.php` avec `<?php require "db.php"; echo "Connexion OK";`, puis lance `php -S localhost:8000` dans `todo/` et ouvre `http://localhost:8000/test.php`. Supprime ensuite `test.php`.
+**Test :** crée temporairement `test.php` avec `<?php require "db.php"; echo "Connexion OK";`, puis ouvre `http://localhost:8000/test.php` (après `php -S localhost:8000` dans `todo/`) ou `http://localhost/todo/test.php` (XAMPP/WAMP). Si tu vois une erreur, relis la table de dépannage du chapitre 7. Supprime ensuite `test.php`.
 
 ---
 
@@ -1650,7 +1738,7 @@ require __DIR__ . "/views/header.php";
 * `(int)` force l'id en nombre entier.
 * `onsubmit="return confirm(...)"` demande confirmation avant de supprimer.
 
-**Test :** lance le serveur dans `todo/` (`php -S localhost:8000`) et ouvre `http://localhost:8000`. Tu vois « Aucune tâche pour l'instant ». Pour vérifier l'affichage, ajoute une ligne à la main dans MySQL : `INSERT INTO taches (titre) VALUES ('Test');`.
+**Test :** lance le serveur dans `todo/` (`php -S localhost:8000`) et ouvre `http://localhost:8000` (avec XAMPP/WAMP : `http://localhost/todo/`). Tu vois « Aucune tâche pour l'instant ». Pour vérifier l'affichage, ajoute une ligne à la main dans MySQL : `INSERT INTO taches (titre) VALUES ('Test');`.
 
 ---
 
