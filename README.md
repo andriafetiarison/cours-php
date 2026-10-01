@@ -1949,7 +1949,7 @@ Tu sais écrire de vrais petits programmes PHP. Voici quoi apprendre ensuite, da
 1. **[La programmation orientée objet (POO)](poo-php.md)**: classes, objets, propriétés, méthodes, `namespace`. C'est la base de tout le PHP moderne.
 2. **[Composer](composer.md)** : le gestionnaire de dépendances de PHP. Il installe des bibliothèques (`composer require ...`) et charge automatiquement tes classes (autoload PSR-4).
 3. **[Le MVC en profondeur](mvc-php.md)** : un routeur, des contrôleurs en classes, des modèles, des vues avec un moteur de templates (Twig, Blade).
-4. **[Sécurité](security-php.md)** : protection CSRF, upload de fichiers sécurisé, validation avancée, `.env` pour les secrets, HTTPS.
+4. **[Sécurité](php-security.md)** : protection CSRF, upload de fichiers sécurisé, validation avancée, `.env` pour les secrets, HTTPS.
 5. **[Laravel](laravel.md)** (ou Symfony) : un framework complet qui gère routes, base de données (ORM), authentification, validation et bien plus. Il sera beaucoup plus facile à comprendre maintenant que tu connais les bases.
 6. **[Créer une API REST](api-rest.md)** : renvoyer du JSON, gérer les verbes HTTP (`GET`, `POST`, `PUT`, `DELETE`) et les codes de statut, pour alimenter une application JavaScript ou mobile.
 7. **Tests automatisés** : PHPUnit ou Pest pour vérifier que ton code fonctionne et le garder fiable.
